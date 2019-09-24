@@ -1,0 +1,58 @@
+
+        <!-- jquery -->
+        <script src="{{ base_url() }}/js/jquery-3.2.1.min.js"></script>
+        <!-- Chart -->
+        <script src="{{ base_url() }}/js/Chart.min.js"></script>
+        <!-- NiceScroll -->
+        <script src="{{ base_url() }}/js/jquery.nicescroll.min.js"></script>
+        <!-- FontAwesome -->
+        <script src="{{ base_url() }}/js/fontawesome-all.min.js"></script>
+
+        <script src="https://use.fontawesome.com/f217cb7068.js"></script>
+        <!-- popper -->
+        <script src="{{ base_url() }}/js/popper.min.js"></script>
+        <!-- bootstrap 4 -->
+        <script src="{{ base_url() }}/js/bootstrap.min.js"></script>
+        <!-- main JS -->
+        <script src="{{ base_url() }}/js/main.js"></script>
+
+        <script src="{{ base_url() }}/js/form-validator.min.js"></script>
+        
+        <script src="{{ base_url() }}/js/djv.js"></script>
+
+        <script src="{{ base_url() }}/js/dataTables.min.js"></script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDWI31oNQLgMHtLSargzOFCeNE02o2wHBA&callback=initMap"
+                async defer></script>
+
+        <script>
+
+            function initMap() {
+                var myLatlng = {lat: -25.363, lng: 131.044};
+
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 4,
+                    center: myLatlng
+                });
+
+                var marker = new google.maps.Marker({
+                    position: myLatlng,
+                    map: map,
+                    title: 'Click to zoom'
+                });
+
+                map.addListener('center_changed', function() {
+                    // 3 seconds after the center of the map has changed, pan back to the
+                    // marker.
+                    window.setTimeout(function() {
+                        map.panTo(marker.getPosition());
+                    }, 3000);
+                });
+
+                marker.addListener('click', function() {
+                    map.setZoom(8);
+                    map.setCenter(marker.getPosition());
+                });
+            }
+
+        </script>

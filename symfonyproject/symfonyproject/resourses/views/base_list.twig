@@ -1,0 +1,160 @@
+{% extends 'templates/app.twig' %}
+{% block title %}
+  {{title}}
+{% endblock %}
+
+{% block page_title %}
+
+    {{title}}
+{% endblock %}
+
+{% block content %}
+    {% if error %}
+      <div class="row col-sm-12 col-md-12">
+        <div class="alert alert-danger" role="alert">
+            {{error}}
+        </div>
+      </div>
+    {% endif %}
+    {% if success %}
+      <div class="row col-sm-12 col-md-12">
+        <div class="alert alert-success" role="alert">
+            {{success}}
+        </div>
+      </div>
+    {% endif %}
+    <iframe id="txtArea1" style="display:none"></iframe>
+
+    <div class="container">
+        <div class="table-responsive">
+            <table id="djvtable" class="text-center main-table table table-bordered">
+                <thead>
+                <tr>
+                    {% for name in collectionNames %}
+                        <th>{{ name }}</th>
+                    {% endfor %}
+
+
+                {% for name in collectionNamesHidden %}
+                        <th style="display:none">{{ name }}</th>
+                    {% endfor %}
+
+
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% if collectionValues %}
+
+                        {% for itemValue in collectionValues %}
+                        <tr>
+                            {% for index in values_selection %}
+                              <td>{{ itemValue[index] }}</td>
+                            {% endfor %}
+
+
+                            <td>
+                                {% if update %}
+                                  <a href='{{link}}/update/{{itemValue.0}}'
+                                     data-method="put" class='btn btn-success'><i class='fa fa-edit'></i> Edit</a>
+                                {% endif %}
+                                {% if delete %}
+                                  <a onclick="return MyFunction();false;" href='{{link}}/delete/{{itemValue.0}}'
+                                     data-method="delete" class='btn btn-danger'><i class='fa fa-close'></i> Delete </a>
+                                {% endif %}
+                            </td>
+
+                            {% for index in values_selectionHidden %}
+                                <td style="display:none">{{ itemValue[index] }}</td>
+                            {% endfor %}
+
+                        </tr>
+
+                        {% endfor %}
+                {% endif %}
+                {% if not collectionValues %}
+                <tr>
+                    Not Found Data
+                </tr>
+                {% endif %}
+                </tbody>
+              </table>
+        </div>
+
+        {% if uploadExcel %}
+
+            <div class="heading">
+                <h4>
+                    Import customers
+                </h4>
+            </div>
+            <form  action="customers/import" method="POST"
+                   enctype="multipart/form-data">
+
+                <input type="file"  name="file" >
+
+                <input type= "submit" value ="Import File" >
+
+                <a class="btn btn-default" href="{{ link }}/export">Export</a>
+
+            </form>
+
+
+
+
+        {% endif %}
+
+        {% if addnew %}
+          <a href='{{link}}/new' class="btn btn-default "><i class="fa fa-plus"></i>Add New</a>
+        {% endif %}
+    </div>
+    <script type="text/javascript">
+        function MyFunction()
+        {
+            var x = confirm("Are you sure you want to delete?");
+            //alert(x);
+            if (x){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
+
+        function fnExcelReport()
+        {
+            var tab_text="<table border='2px'><tr bgcolor='#87AFC6'>";
+            var textRange; var j=0;
+            tab = document.getElementById('djvtable'); // id of table
+
+            for(j = 0 ; j < tab.rows.length ; j++)
+            {
+                tab_text=tab_text+tab.rows[j].innerHTML+"</tr>";
+                //tab_text=tab_text+"</tr>";
+            }
+
+            tab_text=tab_text+"</table>";
+            tab_text= tab_text.replace(/<A[^>]*>|<\/A>/g, "");//remove if u want links in your table
+            tab_text= tab_text.replace(/<img[^>]*>/gi,""); // remove if u want images in your table
+            tab_text= tab_text.replace(/<input[^>]*>|<\/input>/gi, ""); // reomves input params
+
+            var ua = window.navigator.userAgent;
+            var msie = ua.indexOf("MSIE ");
+
+            if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./))      // If Internet Explorer
+            {
+                txtArea1.document.open("txt/html","replace");
+                txtArea1.document.write(tab_text);
+                txtArea1.document.close();
+                txtArea1.focus();
+                sa=txtArea1.document.execCommand("SaveAs",true,"Say Thanks to Sumit.xls");
+            }
+            else                 //other browser not tested on IE 11
+                sa = window.open('data:application/vnd.ms-excel,' + encodeURIComponent(tab_text));
+
+            return (sa);
+        }
+
+    </script>
+{% endblock %}
